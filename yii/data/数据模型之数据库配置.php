@@ -97,3 +97,17 @@ $sql = "insert into messageboard (Topic,Content,Enabled,Date) values ('$Topic','
 mysql_query($sql);
 
 mysql_close(); //关闭MySQL连接
+
+yii2 数据库链接yii basic\config\db.php
+<?php
+
+return [
+    'class' => 'yii\db\Connection',
+    'dsn' => 'mysql:host=localhost;dbname=yii2basic',
+    'username' => 'root',
+    'password' => '',
+    'charset' => 'utf8',
+];
+
+
+
