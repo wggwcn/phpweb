@@ -1,1 +1,3 @@
-
+前面在network里面的登录.php里面可以查到登录的cookie值
+账号的密码上面写着httponly意思 不能使用javacript索取这个cookie
+这个是微软在ie6之后加的httponly为了防止浏览器遭到xss攻击
