@@ -1,28 +1,99 @@
 <?php
-namespace（以下简称ns）。在定义了一个ns之后，下面所申明的class、interface、const（不包含variable）都是在申明的ns这个“域”里面的。
-当引用一个申明了ns的包含文件
-，想要调用这个ns里面的东西，那必须调整当前脚本也到此ns域，否则就得用全称（）包含ns全称）：
-// inc.php  
-namespace Foo;  
-class Bar {}  
+在PHP中，出现同名函数或是同名类是不被允许的。为防止编程人员在项目中定义的类名或函数名出现重复冲突，在PHP5.3中引入了命名空间这一概念。
+
+1.命名空间，即将代码划分成不同空间，不同空间的类名相互独立，互不冲突。一个php文件中可以存在多个命名空间，第一个命名空间前不能有任何代码
+  。内容空间声明后的代码便属于这个命名空间，例如：
   
-// 访问Foo的第一种方法，用全称  
-require 'inc.php';  
-$foo = new \Foo\Bar();  
-  
-// 访问Foo的第二种方法  
-namespace Foo; // 调整当前脚本到Foo这个ns域，而且namespace申明必须在第一句  
-require 'inc.php';  
-$foo = new Bar();  
-use关键字目的是使用ns的别名：
-// 比如  
-use A\Very\Long\Namespace as Ns;  
-// 这样就可以用Ns来代替A/Very/Long/Namespace这个ns下定义的东西  
-$foo = new Ns\Foo();  
-但是在一些开源项目里面经常会看到use Ns\Component这样的用法，没有用as，这让我以前一直在思考use是否还有第二种用法，糟糕的是PHP的文档里面
-也没有对描述，只能靠题，得出一个比较靠得出一个比较靠谱的结论是use可以省略as以及后面的别名而直接把ns最后一个节点的名字当作别名，
-感觉是不是很像ln -s命令的用法呢：
-// 第三种用法  
-require 'inc.php';  
-use Foo\Bar; // 这样Bar就等于Foo\Bar了  
-$foo = new Bar();  
+<?php
+    echo 111;       //由于namespace前有代码而报错
+    namespace Teacher;
+    class Person{
+        function __construct(){
+            echo 'Please study!';
+        }
+    }
+2.调用不同空间内类或方法需写明命名空间。例如：
+  <?php
+    namespace Teacher;
+    class Person{
+        function __construct(){
+            echo 'Please study!<br/>';
+        }
+    }
+    function Person(){
+        return 'You must stay here!';
+    };
+    namespace Student;
+    class Person{
+        function __construct(){
+            echo 'I want to play!<br/>';
+        }
+    }
+    new Person();                    //本空间（Student空间）
+    new \Teacher\Person();           //Teacher空间
+    new \Student\Person();           //Student空间
+    echo \Teacher\Person();          //Teacher空间下Person函数
+    //输出：
+    I want to play!
+    Please study!
+    I want to play!
+    You must stay here!
+      
+      3.在命名空间内引入其他文件不会属于本命名空间，而属于公共空间或是文件中本身定义的命名空间。例：
+
+首先定义一个1.php和2.php文件：
+      <?php     //1.php
+class Person{
+    function __construct(){
+            echo 'I am one!<br/>';
+        }
+}
+
+<?php
+namespace Newer;
+require_once './1.php';
+new Person();      //报错，找不到Person;
+new \Person();     //输出 I am tow!;
+
+<?php     //2.php
+namespace Two
+class Person{
+    function __construct(){
+            echo 'I am tow!<br/>';
+        }
+}
+
+4.下面我们来看use的使用方法：（use以后引用可简写）
+     namespace School\Parents;
+    class Man{
+        function __construct(){
+            echo 'Listen to teachers!<br/>';
+        }
+    }
+    namespace School\Teacher;
+    class Person{
+        function __construct(){
+            echo 'Please study!<br/>';
+        }
+    }
+    namespace School\Student;
+    class Person{
+        function __construct(){
+            echo 'I want to play!<br/>';
+        }
+    }
+    new Person();                   //输出I want to play!
+    new \School\Teacher\Person();   //输出Please study!
+    new Teacher\Person();           //报错
+    ----------
+    use School\Teacher;  
+    new Teacher\Person();           //输出Please study!    
+    ----------
+    use School\Teacher as Tc;  
+    new Tc\Person();           //输出Please study!  
+    ----------
+    use \School\Teacher\Person; 
+    new Person();           //报错
+    ----------
+    use \School\Parent\Man; 
+    new Man();           //报错
